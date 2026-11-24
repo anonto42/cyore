@@ -1,0 +1,42 @@
+# Cyore Agent Loader
+
+The canonical knowledge base for Codex, Claude, Gemini/Antigravity, and other AI assistants is:
+`.agents/shared/`.
+
+Before implementation, diagnosis, or refactoring, read:
+1. `.agents/shared/agent-startup.md`
+2. `.agents/shared/rules/rust-standards.md`
+3. `.agents/shared/rules/safety.md`
+
+Do not create duplicated rules, memory, or plans outside `.agents/shared/`.
+
+---
+
+## Project Context
+
+This repository is **Cyore**, a learning project that builds, from first principles, a tiny Rust
+model that turns plain-English requests into terminal commands, wraps it in a safe agent, and ships
+it as one small binary for minimal PCs. The staged plan lives in `README.md`.
+
+It is a Cargo workspace (root `Cargo.toml`); each learning milestone is its own member crate:
+- **`xor/`** (Stage 1, done): a 2-layer sigmoid network in pure Rust, no dependencies — forward
+  pass, MSE loss, and hand-written backpropagation.
+- Planned members: `mnist/` (Stage 1), a Burn model crate (Stage 2), the agent (Stage 3).
+
+The owner is learning; prefer clear, well-commented code that explains *why* over clever code.
+
+---
+
+## Non-Negotiable Invariants
+
+1. **From Scratch in Stage 1:** Stage 1 crates (`xor`, `mnist`) use only the Rust standard library.
+   No ML, linear-algebra, or RNG crates. Third-party crates (e.g. Burn) begin in Stage 2.
+2. **Correct Gradients:** Any change to forward/backward math must keep or add a test proving it
+   (unit test or numerical gradient check). `cargo test --workspace` must stay green.
+3. **Reproducibility:** Training uses the seeded in-repo `Rng`; the same seed gives the same result.
+4. **Human-in-the-Loop Execution:** The agent (Stage 3) never runs a command without showing it and
+   getting explicit confirmation, and always enforces the allowlist/blocklist in
+   `.agents/shared/rules/safety.md`.
+5. **Minimal Footprint:** Avoid heavy dependencies; the end target is a 5–30 MB single binary using
+   under 100 MB of RAM.
+6. **Spec-Driven Changes:** Non-trivial changes start as an OpenSpec proposal in `openspec/changes/`.

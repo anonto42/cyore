@@ -1,0 +1,8 @@
+.git
+.direnv
+target
+result
+.env
+*.md
+.agents
+openspec

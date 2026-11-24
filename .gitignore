@@ -1,1 +1,21 @@
-*/target/*
+# Rust build output (workspace target dir)
+target/
+
+# Environment and secrets
+.env
+.env.local
+
+# Nix & direnv
+.direnv/
+result
+result-*
+
+# IDE & editor files
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS artifacts
+.DS_Store
+Thumbs.db

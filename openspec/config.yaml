@@ -1,0 +1,28 @@
+schema: spec-driven
+
+context: |
+  Cyore is a learning project: a tiny Rust model that turns plain-English requests into
+  terminal commands, a safe agent around it, and a single small binary for minimal PCs.
+  It is a Cargo workspace with one crate per milestone. Stage 1 crates use only the Rust
+  standard library. Read AGENTS.md and .agents/shared/agent-startup.md before changing code.
+
+rules:
+  proposal:
+    - State explicit purpose, non-goals, and invariants for every change.
+    - Name the learning-plan stage (README.md) the change belongs to.
+    - Check active changes in openspec/changes/ for overlap.
+  design:
+    - Write down the math (forward pass, loss, gradients) before writing code.
+    - Justify any new dependency against the minimal-footprint goal.
+  tasks:
+    - Include tests for every new numerical component, including a gradient check for backward passes.
+    - Validate with 'make check' before completing any change.
+
+operations:
+  apply:
+    guidance:
+      - Read startup and scoped rules in .agents/shared/ before coding.
+      - Run 'make check' (fmt, clippy, tests, release build) before declaring completion.
+  archive:
+    guidance:
+      - Update .agents/shared/memory/project-status.md when a milestone completes.
