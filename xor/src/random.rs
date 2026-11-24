@@ -5,13 +5,8 @@ pub struct Rng {
 }
 
 impl Rng {
-
     pub fn new(seed: u64) -> Self {
-        let state = if seed == 0 {
-            0x9E3779B97F4A7C15
-        } else {
-            seed
-        };
+        let state = if seed == 0 { 0x9E3779B97F4A7C15 } else { seed };
         Rng { state }
     }
 

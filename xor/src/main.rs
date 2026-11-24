@@ -31,7 +31,10 @@ fn main() {
     let epochs = 20_000;
     let learning_rate = 1.0;
 
-    println!("Starting training for {} epochs with learning_rate = {}...\n", epochs, learning_rate);
+    println!(
+        "Starting training for {} epochs with learning_rate = {}...\n",
+        epochs, learning_rate
+    );
 
     // 5. Training loop
     for epoch in 1..=epochs {
@@ -55,7 +58,10 @@ fn main() {
 
     // 6. Test and evaluate the trained network on the XOR truth table
     println!("\n=== Evaluation on XOR Truth Table ===");
-    println!("{:<16} {:<10} {:<12} {:<10}", "Input [A, B]", "Target", "Predicted", "Rounded");
+    println!(
+        "{:<16} {:<10} {:<12} {:<10}",
+        "Input [A, B]", "Target", "Predicted", "Rounded"
+    );
     println!("{}", "-".repeat(50));
 
     for (input, target) in inputs.iter().zip(&targets) {
