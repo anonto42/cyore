@@ -1,6 +1,5 @@
-use crate::activation::sigmoid;
-use crate::random::Rng;
 use crate::activation::{sigmoid, sigmoid_derivative};
+use crate::random::Rng;
 
 pub struct Layer {
     pub weights: Vec<Vec<f64>>, // weights[neuron][input]
