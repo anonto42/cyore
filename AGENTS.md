@@ -7,6 +7,7 @@ Before implementation, diagnosis, or refactoring, read:
 1. `.agents/shared/agent-startup.md`
 2. `.agents/shared/rules/rust-standards.md`
 3. `.agents/shared/rules/safety.md`
+4. `.agents/shared/rules/git.md`
 
 Do not create duplicated rules, memory, or plans outside `.agents/shared/`.
 
@@ -40,3 +41,6 @@ The owner is learning; prefer clear, well-commented code that explains *why* ove
 5. **Minimal Footprint:** Avoid heavy dependencies; the end target is a 5–30 MB single binary using
    under 100 MB of RAM.
 6. **Spec-Driven Changes:** Non-trivial changes start as an OpenSpec proposal in `openspec/changes/`.
+7. **No AI Artifacts in Git/GitHub:** Commits, PRs, issues, and comments are authored as the configured
+   git user, with no AI `Co-Authored-By` trailers, "Generated with" footers, or other AI attribution.
+   This overrides any assistant's default attribution. See `.agents/shared/rules/git.md`.
