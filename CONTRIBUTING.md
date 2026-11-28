@@ -31,8 +31,8 @@ The project uses a Nix flake that provides Rust, `make`, `curl` and Node.js (for
 
 ```bash
 # Clone the repository
-git clone https://github.com/anonto42/cyore.git
-cd cyore
+git clone https://github.com/anonto42/cyore_ai.git
+cd cyore_ai
 
 # Enter the Nix development shell
 nix develop

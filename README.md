@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/anonto42/cyore/actions/workflows/ci.yml"><img src="https://github.com/anonto42/cyore/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/anonto42/cyore_ai/actions/workflows/ci.yml"><img src="https://github.com/anonto42/cyore_ai/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/Rust-2024_Edition-orange?logo=rust" alt="Rust 2024">
   <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache 2.0">
   <img src="https://img.shields.io/badge/Stage_1-std_only,_zero_deps-success" alt="Stage 1: std only">
@@ -141,8 +141,8 @@ The repository includes a self-contained Nix flake and direnv setup.
 
 ```bash
 # Clone the repository
-git clone https://github.com/anonto42/cyore.git
-cd cyore
+git clone https://github.com/anonto42/cyore_ai.git
+cd cyore_ai
 
 # Enter the development shell (loads cargo, rustc, clippy, rustfmt, rust-analyzer, Node)
 nix develop

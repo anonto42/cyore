@@ -6,8 +6,8 @@ How to build and run every finished milestone. All commands run from the reposit
 
 ## 1. Setup
 ```bash
-git clone https://github.com/anonto42/cyore.git
-cd cyore
+git clone https://github.com/anonto42/cyore_ai.git
+cd cyore_ai
 nix develop          # or: direnv allow, or install Rust ≥ 1.85 with rustup
 make help            # list every target
 ```
@@ -77,4 +77,4 @@ The `mnist` binary needs the dataset at runtime, so run it directly with `make m
 ---
 
 ## 5. Prebuilt binaries
-Tagged releases publish archives for Linux (x86_64 and aarch64, static musl), Windows (x86_64) and macOS (Apple Silicon). Download them from the [Releases page](https://github.com/anonto42/cyore/releases) and check them with `sha256sum -c SHA256SUMS.txt`. See [RELEASES.md](RELEASES.md).
+Tagged releases publish archives for Linux (x86_64 and aarch64, static musl), Windows (x86_64) and macOS (Apple Silicon). Download them from the [Releases page](https://github.com/anonto42/cyore_ai/releases) and check them with `sha256sum -c SHA256SUMS.txt`. See [RELEASES.md](RELEASES.md).
