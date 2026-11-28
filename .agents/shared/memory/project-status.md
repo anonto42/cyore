@@ -39,4 +39,3 @@ Last updated: 2026-11-28
 
 - `mnist` keeps all pixels as `f64` (≈430 MB). Storing `u8` and normalising per example would cut
   that to ≈60 MB if memory ever matters for training.
-- Archive the `add-mnist-classifier` OpenSpec change after review (`openspec archive`).
