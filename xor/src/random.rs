@@ -27,3 +27,33 @@ impl Rng {
         min + (max - min) * self.next_f64()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_same_seed_same_sequence() {
+        let mut a = Rng::new(42);
+        let mut b = Rng::new(42);
+        for _ in 0..100 {
+            assert_eq!(a.next_u64(), b.next_u64());
+        }
+    }
+
+    #[test]
+    fn test_zero_seed_is_remapped() {
+        // xorshift with state 0 would return 0 forever; the constructor must avoid that.
+        let mut rng = Rng::new(0);
+        assert!((0..10).any(|_| rng.next_u64() != 0));
+    }
+
+    #[test]
+    fn test_range_bounds() {
+        let mut rng = Rng::new(7);
+        for _ in 0..10_000 {
+            let x = rng.range(-1.0, 1.0);
+            assert!((-1.0..1.0).contains(&x));
+        }
+    }
+}

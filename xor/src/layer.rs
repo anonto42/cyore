@@ -65,3 +65,44 @@ impl Layer {
         input_grads
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_same_seed_same_parameters() {
+        let a = Layer::new(3, 4, &mut Rng::new(42));
+        let b = Layer::new(3, 4, &mut Rng::new(42));
+        assert_eq!(a.weights, b.weights);
+        assert_eq!(a.biases, b.biases);
+    }
+
+    #[test]
+    fn test_initial_parameters_in_range() {
+        let layer = Layer::new(5, 6, &mut Rng::new(1));
+        for &w in layer.weights.iter().flatten().chain(&layer.biases) {
+            assert!((-1.0..1.0).contains(&w));
+        }
+    }
+
+    #[test]
+    fn test_backward_uses_pre_update_weights() {
+        let mut layer = Layer::new(3, 2, &mut Rng::new(42));
+        layer.forward(&[0.5, -1.0, 2.0]);
+        let old_weights = layer.weights.clone();
+        let output_grads = [0.3, -0.7];
+
+        // A large learning rate makes any use of the *updated* weights obvious.
+        let input_grads = layer.backward(&output_grads, 10.0);
+
+        for i in 0..3 {
+            let mut expected = 0.0;
+            for j in 0..2 {
+                let delta = output_grads[j] * sigmoid_derivative(layer.outputs[j]);
+                expected += delta * old_weights[j][i];
+            }
+            assert!((input_grads[i] - expected).abs() < 1e-12);
+        }
+    }
+}
