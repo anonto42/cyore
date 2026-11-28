@@ -76,7 +76,7 @@ The project grows in four stages. It starts with a neural network written by han
 |---|---|---|---|
 | 1 | XOR network in pure Rust | `xor/` | ✅ Done: converges to MSE ≈ 3e-5 in 20k epochs (seed 42) |
 | 1 | MNIST digit recogniser | `mnist/` | ✅ Done: 97.96% test accuracy after 10 epochs (784 → 128 → 10, seed 42) |
-| 1 | Architecture survey (dense, CNN, RNN, transformer) | — | 🚧 Next (study, no code) |
+| 1 | Architecture survey (dense, CNN, RNN, transformer) | — | 📖 Study notes in [docs/MODEL_SURVEY.md](docs/MODEL_SURVEY.md) |
 | 2 | Burn: intent classifier + slot model, then tiny seq2seq | — | ⏳ Not started |
 | 3 | Rust agent with confirm-before-run and safety rules | — | ⏳ Not started |
 | 4 | int8 quantisation, embedded weights, cross-compile | — | 🧩 Release profile already set in root `Cargo.toml` |
@@ -262,6 +262,7 @@ All targets act on `CRATE` (default: `xor`). Override it with `make <target> CRA
 ## Documentation Index
 
 - [Architecture Reference](docs/ARCHITECTURE.md): Workspace layout, the math of each network, and the planned agent pipeline.
+- [Model Survey](docs/MODEL_SURVEY.md): Dense, CNN, RNN and transformer networks compared, and which fits each Stage 2 model.
 - [Usage Guide](docs/USAGE.md): How to run every milestone, including all MNIST options.
 - [Testing Guide](docs/TESTING.md): Gradient checks, reproducibility tests, and the `make check` gate.
 - [Releases & Packaging](docs/RELEASES.md): Versioning, cross-platform release builds, and checksums.
