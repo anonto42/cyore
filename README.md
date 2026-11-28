@@ -1,42 +1,272 @@
-# Rust AI PC Agent – Learning Plan
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo/crest-reversed.svg">
+    <img src="assets/logo/crest-primary.svg" alt="Cyore Crest Logo" width="160">
+  </picture>
+</p>
 
-Goal: learn how AI models are built, train your own small model in Rust that turns plain-English requests into terminal commands, connect it to an agent, and ship it all as one tiny program that runs on very minimal PCs.
+<h1 align="center">Cyore</h1>
 
-## Stage 1 – How models are actually built
+<p align="center">
+  <strong>A Tiny, From-Scratch Rust Model That Turns Plain English Into Terminal Commands</strong><br>
+  Built From First Principles &bull; Hand-Written Backpropagation &bull; Human-in-the-Loop Agent &bull; One Tiny Binary &bull; Runs on Minimal PCs
+</p>
 
-- Learn the core ideas: tensors, layers, weights, activation functions, loss, gradient descent and backpropagation (3Blue1Brown neural network series).
-- Build a tiny neural network by hand in plain Rust (no libraries): a 2-layer network that learns XOR. Write the forward pass, loss and backpropagation yourself.
-- Extend it to recognise handwritten digits (MNIST) to see training on real data.
-- Learn the main architectures and what each is for: dense networks, CNNs (images), RNNs, and transformers (text). Watch Andrej Karpathy's "Zero to Hero" series for transformers.
+<p align="center">
+  <img src="https://img.shields.io/badge/Rust-2024_Edition-orange?logo=rust" alt="Rust 2024">
+  <img src="https://img.shields.io/badge/Stage_1-std_only,_zero_deps-success" alt="Stage 1: std only">
+  <img src="https://img.shields.io/badge/ML_Framework-Burn_(Stage_2)-red" alt="Burn in Stage 2">
+  <img src="https://img.shields.io/badge/Workspace-One_Crate_per_Milestone-informational" alt="Cargo workspace">
+  <img src="https://img.shields.io/badge/Specs-OpenSpec-blueviolet" alt="OpenSpec">
+  <img src="https://img.shields.io/badge/Dev_Shell-Nix_Flake-5277C3?logo=nixos&logoColor=white" alt="Nix flake">
+  <img src="https://img.shields.io/badge/Image-FROM_scratch_(musl)-2496ED?logo=docker&logoColor=white" alt="Docker scratch image">
+  <img src="https://img.shields.io/badge/Execution-Confirm_Before_Run-success" alt="Confirm before run">
+  <img src="https://img.shields.io/badge/Target-5--30_MB_binary,_<100_MB_RAM-blue" alt="Footprint target">
+</p>
 
-## Stage 2 – Build your own model in Rust
+---
 
-- Learn Burn (the Burn Book): tensors, modules, training loop, saving and loading weights.
-- Build your dataset: a JSON or CSV file of pairs like "show my files" → `ls -la`, "how much disk space" → `df -h`. Start with 50–100 commands, 20+ phrasings each (a few thousand examples). Generate variations with scripts.
-- Start simple: an intent classifier. A small network reads the sentence and picks one command template from your list, plus a slot model that extracts values like file names or folders. This is only about 1–10 MB.
-- Then the advanced version: a tiny transformer (seq2seq) that writes the command itself, about 5–50M parameters.
-- Train, then test on phrasings it has never seen. Learn about overfitting, train/test splits and accuracy.
+## Overview
 
-## Stage 3 – Connect the model to an agent
+**Cyore** is a learning project that builds, from first principles, a tiny model in **Rust** that turns plain-English requests into terminal commands, wraps it in a **safe agent**, and ships everything as **one small binary** that runs on very minimal PCs: an old laptop or a Raspberry Pi.
 
-- Write the agent in Rust: read your input, run the model, get the command, show it, ask "Run this? (y/n)", then execute it with std::process::Command and show the output.
-- Safety: an allowlist of permitted commands, a block list (rm -rf /, mkfs, dd, shutdown), timeouts, and a confidence threshold. If the model is unsure, it asks you instead of guessing.
-- Add a loop for multi-step tasks, simple memory of recent commands, and a Tool trait so new tools are easy to add.
-- Learn: how agents work (perceive, decide, act, observe), and how big agents use LLMs the same way.
+The project grows in four stages. It starts with a neural network written by hand in plain Rust, with no libraries, and ends with a quantised model embedded in a single executable. Each milestone is its own crate in a Cargo workspace, so you can read the project in order and watch it grow.
 
-## Stage 4 – Package for minimal resource use
+> [!IMPORTANT]
+> **Human-in-the-Loop by Design**: The Cyore agent never runs a command without showing it first and asking `Run this? (y/n)`. Every command is checked against an allowlist and a blocklist before it can run.
 
-- Quantise the model weights to 8-bit (int8) to cut size and RAM by about 4x.
-- Use Burn's CPU backend (ndarray) so no GPU is needed.
-- Embed the weights inside the binary with include\_bytes!, so it is one single file.
-- Release build settings: opt-level = 3 (or "z" for size), lto = true, codegen-units = 1, strip = true, panic = "abort".
-- Load the model once at start-up and keep it in memory; avoid heavy dependencies.
-- Target: a 5–30 MB binary using under 50–100 MB of RAM, running on an old laptop or a Raspberry Pi. Cross-compile for Linux, Windows and ARM.
+---
 
-## Suggested resources
+## Learning Roadmap
 
-- The Rust Book and Rust by Example
-- 3Blue1Brown neural network videos
-- Andrej Karpathy, Neural Networks: Zero to Hero
-- The Burn Book (burn.dev)
-- Candle examples on Hugging Face GitHub (for comparison)
+### Stage 1: How Models Are Actually Built
+- **Core Ideas**: Tensors, layers, weights, activation functions, loss, gradient descent and backpropagation (3Blue1Brown neural network series).
+- **XOR From Scratch** (`xor/`, done): A 2-layer network that learns XOR in plain Rust with no libraries. The forward pass, loss and backpropagation are all written by hand.
+- **MNIST Digit Recogniser** (`mnist/`, next): Extend the network to recognise handwritten digits and see training on real data: softmax with cross-entropy, mini-batches, shuffling and test-set accuracy.
+- **Architecture Survey**: The main architectures and what each is for: dense networks, CNNs (images), RNNs, and transformers (text). Andrej Karpathy's "Zero to Hero" series covers transformers.
+
+### Stage 2: Build Your Own Model in Rust
+- **Learn Burn** (the Burn Book): Tensors, modules, the training loop, and saving and loading weights.
+- **Build the Dataset**: A JSON or CSV file of pairs like `"show my files"` → `ls -la` and `"how much disk space"` → `df -h`. Start with 50–100 commands and 20+ phrasings each (a few thousand examples), with variations generated by scripts.
+- **Start Simple with an Intent Classifier**: A small network reads the sentence and picks one command template from the list. A slot model extracts values like file names or folders. Together they take only about 1–10 MB.
+- **Then Go Advanced with a Tiny Transformer**: A seq2seq model that writes the command itself, with about 5–50M parameters.
+- **Evaluate Honestly**: Test on phrasings the model has never seen. Learn about overfitting, train/test splits and accuracy.
+
+### Stage 3: Connect the Model to an Agent
+- **Agent Loop in Rust**: Read the input, run the model, get the command, show it, ask `Run this? (y/n)`, then execute it with `std::process::Command` and show the output.
+- **Safety Layer**: An allowlist of permitted commands, a blocklist (`rm -rf /`, `mkfs`, `dd`, `shutdown`), timeouts, and a confidence threshold. If the model is unsure, it asks you instead of guessing.
+- **Multi-Step Tasks**: A loop for multi-step tasks, simple memory of recent commands, and a `Tool` trait so new tools are easy to add.
+- **How Agents Work**: Perceive, decide, act, observe. Big agents use LLMs in the same way.
+
+### Stage 4: Package for Minimal Resource Use
+- **int8 Quantisation**: Quantise the model weights to 8-bit to cut size and RAM by about 4x.
+- **CPU-Only Inference**: Use Burn's CPU backend (`ndarray`) so no GPU is needed.
+- **Single-File Binary**: Embed the weights in the binary with `include_bytes!`.
+- **Release Profile**: `opt-level = 3` (or `"z"` for size), `lto = true`, `codegen-units = 1`, `strip = true`, `panic = "abort"`.
+- **Lean Runtime**: Load the model once at start-up, keep it in memory, and avoid heavy dependencies.
+- **Cross-Platform Target**: A 5–30 MB binary using under 50–100 MB of RAM, running on an old laptop or a Raspberry Pi. Cross-compiled for Linux, Windows and ARM.
+
+---
+
+## Progress
+
+| Stage | Milestone | Crate | Status |
+|---|---|---|---|
+| 1 | XOR network in pure Rust | `xor/` | ✅ Done: converges to MSE ≈ 3e-5 in 20k epochs (seed 42) |
+| 1 | MNIST digit recogniser | `mnist/` | 🚧 In progress ([proposal](openspec/changes/add-mnist-classifier/proposal.md)) |
+| 1 | Architecture survey (dense, CNN, RNN, transformer) | — | ⏳ Not started |
+| 2 | Burn: intent classifier + slot model, then tiny seq2seq | — | ⏳ Not started |
+| 3 | Rust agent with confirm-before-run and safety rules | — | ⏳ Not started |
+| 4 | int8 quantisation, embedded weights, cross-compile | — | 🧩 Release profile already set in root `Cargo.toml` |
+
+---
+
+## Architectural Principles
+
+The target pipeline for the finished agent (Stages 2–4):
+
+```
+                  +----------------------------------------------+
+                  |          You: "how much disk space?"         |
+                  +-----------------------+----------------------+
+                                          | Plain-English request
+                                          v
+                  +----------------------------------------------+
+                  |         Model (Burn, CPU / ndarray)          |
+                  |   Intent Classifier + Slot Model, or a tiny  |
+                  |   seq2seq transformer (int8, embedded)       |
+                  +-----------------------+----------------------+
+                                          | Command + confidence
+                                          v
+                  +----------------------------------------------+
+                  |               Safety Layer                   |
+                  |  Allowlist + Blocklist + Confidence Threshold|
+                  +-----------------------+----------------------+
+                                          | Show: "df -h"  Run this? (y/n)
+                                          v
+                  +----------------------------------------------+
+                  |       Executor (std::process::Command)       |
+                  |      Explicit args + timeout + output        |
+                  +----------------------------------------------+
+```
+
+1. **From Scratch First**: Stage 1 crates (`xor`, `mnist`) use only the Rust standard library: no ML, linear-algebra or RNG crates. Third-party crates such as Burn start in Stage 2.
+2. **Provably Correct Gradients**: Any change to forward or backward math keeps or adds a test proving it (a unit test or a numerical gradient check). `cargo test --workspace` stays green.
+3. **Reproducible Training**: Training uses the seeded in-repo `Rng` (xorshift64), so the same seed gives the same result.
+4. **Human-in-the-Loop Execution**: The agent never runs a command without showing it and getting explicit confirmation. Model output never goes through `sh -c` unless the template came from the allowlist.
+5. **Minimal Footprint**: No heavy dependencies. The end target is a 5–30 MB single binary using under 100 MB of RAM.
+6. **Spec-Driven Changes**: Non-trivial changes start as an [OpenSpec](openspec/) proposal in `openspec/changes/`.
+
+---
+
+## Requirements
+
+| Component | Specification | Notes |
+|---|---|---|
+| **Rust Toolchain** | Rust ≥ 1.85 (edition 2024) | Provided by the Nix dev shell |
+| **Build Tools** | `make`, `git` | Provided by the Nix dev shell |
+| **OpenSpec** (optional) | Node.js for `npx @fission-ai/openspec` | Used only by `make spec` |
+| **Docker** (optional) | Any recent Docker Engine | Builds a static musl binary into a `FROM scratch` image |
+| **Target Machine** | Any x86_64 or ARM PC, including a Raspberry Pi | No GPU required at any stage |
+
+---
+
+## Quickstart Guide
+
+### 1. Development Environment Setup
+The repository includes a self-contained Nix flake and direnv setup.
+
+```bash
+# Clone the repository
+git clone https://github.com/anonto42/cyore.git
+cd cyore
+
+# Enter the development shell (loads cargo, rustc, clippy, rustfmt, rust-analyzer, Node)
+nix develop
+# or: direnv allow
+```
+
+Without Nix, install Rust ≥ 1.85 with [rustup](https://rustup.rs) and use `make` as usual.
+
+### 2. Verify Tooling & Tests
+
+```bash
+# Run the whole workspace test suite
+make test
+
+# Full local gate: fmt check, clippy -D warnings, tests, and release build
+make check
+```
+
+### 3. Train the XOR Network
+
+```bash
+# Build the optimised binary and run it (CRATE defaults to xor)
+make run
+
+# Or run with the debug profile for fast compiles
+make dev
+
+# Check the release binary size (Stage 4 target: 5-30 MB)
+make size
+```
+
+The network (2 → 4 → 1, sigmoid, MSE, learning rate 1.0) trains for 20,000 epochs, logs the loss every 2,000 epochs, and then prints its predictions for the XOR truth table.
+
+### 4. Run in a Container
+
+```bash
+# Build a static musl binary into an empty FROM scratch image, then run it
+make docker-run
+```
+
+Any workspace member can be targeted with `CRATE=<member>`, for example `make run CRATE=mnist`.
+
+---
+
+## Project Structure
+
+```
+├── .agents/                    # Shared AI-assistant knowledge base
+│   ├── shared/
+│   │   ├── memory/             # Project status & design decisions
+│   │   └── rules/              # Rust standards, safety, and git rules
+│   └── skills/                 # OpenSpec workflow skills (propose → apply → archive)
+├── assets/                     # Brand identity and SVG crest logos
+├── mnist/                      # Stage 1: MNIST digit recogniser (std only, in progress)
+├── openspec/                   # Spec-driven change management & capability specs
+│   ├── changes/                # Active proposals (e.g. add-mnist-classifier)
+│   └── specs/                  # Accepted capability specs (e.g. xor-network)
+├── xor/                        # Stage 1: 2-layer XOR network in pure Rust
+│   └── src/                    # activation, loss, layer, network, random, data, main
+├── Cargo.toml                  # Workspace members + shared release profile
+├── Dockerfile                  # musl build → FROM scratch runtime image
+├── flake.nix                   # Nix development shell
+└── Makefile                    # Build, test, lint, spec, and Docker targets
+```
+
+---
+
+## Makefile Reference
+
+All targets act on `CRATE` (default: `xor`). Override it with `make <target> CRATE=<member>`.
+
+| Target | Description |
+|---|---|
+| `make help` | Shows the available commands |
+| `make build` | Builds the optimised release binary for `CRATE` |
+| `make run` | Builds and runs the release binary for `CRATE` |
+| `make dev` | Runs `CRATE` with the debug profile (fast compile) |
+| `make test` | Runs all workspace tests |
+| `make bench` | Runs benchmarks (`cargo bench`) |
+| `make lint` | Runs clippy with warnings as errors |
+| `make fmt` | Formats all Rust code |
+| `make size` | Shows the release binary size (Stage 4 target: 5–30 MB) |
+| `make spec` | Validates OpenSpec specs and changes (strict) |
+| `make docker-build` | Builds the container image for `CRATE` |
+| `make docker-run` | Runs the container image for `CRATE` |
+| `make clean` | Removes build artifacts |
+| `make check` | Full local gate: fmt check, clippy, tests, and release build |
+
+---
+
+## Documentation Index
+
+- [Agent Loader](AGENTS.md): Project context and the non-negotiable invariants.
+- [Agent Startup Checklist](.agents/shared/agent-startup.md): Environment, OpenSpec and verification steps before any change.
+- [Project Status](.agents/shared/memory/project-status.md): Milestones, design decisions and known follow-ups.
+- [Rust Standards](.agents/shared/rules/rust-standards.md): Coding conventions for every crate.
+- [Safety Rules](.agents/shared/rules/safety.md): Confirmation, allowlist/blocklist, confidence and timeout rules for the agent.
+- [Git Rules](.agents/shared/rules/git.md): Commit style and authorship rules.
+- [XOR Network Spec](openspec/specs/xor-network/spec.md): The accepted capability spec for the `xor` crate.
+- [MNIST Classifier Proposal](openspec/changes/add-mnist-classifier/proposal.md): The active change for the next milestone.
+
+---
+
+## Learning Resources
+
+- [The Rust Book](https://doc.rust-lang.org/book/) and [Rust by Example](https://doc.rust-lang.org/rust-by-example/)
+- [3Blue1Brown: Neural Networks](https://www.3blue1brown.com/topics/neural-networks)
+- [Andrej Karpathy: Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html)
+- [The Burn Book](https://burn.dev/books/burn/)
+- [Candle examples](https://github.com/huggingface/candle) on Hugging Face's GitHub (for comparison)
+
+---
+
+## Security & Safe Execution
+
+> [!CAUTION]
+> **Generated Commands Are Untrusted**: A model can be wrong with high confidence. Always read the command Cyore shows before you confirm it, and never run the agent with elevated privileges (`sudo`/root).
+
+Cyore enforces its safety rules in code, not by trusting the model:
+
+- **Always Confirm**: Every command is shown, and nothing runs without your explicit `y`.
+- **Always Refuse**: `rm -rf /`, `mkfs`, `dd`, `shutdown`, `reboot`, fork bombs, writes to `/dev/sd*`, and `chmod -R 777 /`, whatever the model's confidence.
+- **Ask When Unsure**: Below the confidence threshold, the agent asks you to clarify instead of guessing.
+- **Fail Gracefully**: Every command has a timeout, and bad model output or a failed command never crashes the agent.
+
+---
+
+<p align="center">
+  Built step by step to learn how AI models really work, from a single neuron to a shipped agent.
+</p>
