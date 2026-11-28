@@ -1,0 +1,12 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v27
+      # fmt check, clippy -D warnings, workspace tests, release build
+      - run: nix develop -c make check
+      # OpenSpec specs and active changes (strict)
+      - run: nix develop -c make spec
