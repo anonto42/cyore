@@ -67,7 +67,24 @@ Each epoch prints the training loss and test accuracy. The run ends with a confu
 
 ---
 
-## 4. Containers
+## 4. Command dataset (`dataset/`)
+```bash
+make commands-data                          # writes data/commands/ (git-ignored)
+make commands-data ARGS="--per-intent 120"  # more training examples per intent
+make commands-data ARGS="--help"            # every option
+```
+
+| Option | Meaning | Default |
+|---|---|---|
+| `--out <DIR>` | Output directory | `data/commands` |
+| `--seed <N>` | Random seed (same seed = byte-identical files) | `42` |
+| `--per-intent <N>` | Training examples per intent | `80` |
+
+With the defaults it writes 51 intents (50 commands + `unknown`), 4,080 training examples and 162 hand-written test examples. The format of `train.jsonl`, `test.jsonl` and `intents.json` is described in the [Dataset Crate Guide](../dataset/README.md).
+
+---
+
+## 5. Containers
 ```bash
 make docker-run              # builds a static musl binary into an empty FROM scratch image
 make docker-run CRATE=xor
@@ -76,5 +93,5 @@ The `mnist` binary needs the dataset at runtime, so run it directly with `make m
 
 ---
 
-## 5. Prebuilt binaries
+## 6. Prebuilt binaries
 Tagged releases publish archives for Linux (x86_64 and aarch64, static musl), Windows (x86_64) and macOS (Apple Silicon). Download them from the [Releases page](https://github.com/anonto42/cyore_ai/releases) and check them with `sha256sum -c SHA256SUMS.txt`. See [RELEASES.md](RELEASES.md).

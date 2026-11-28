@@ -5,6 +5,7 @@ One Cargo workspace with one crate per learning milestone. Each crate stands alo
 ```
 xor/      Stage 1   2 → 4 → 1 sigmoid network, MSE, per-example SGD     (std only, done)
 mnist/    Stage 1   784 → 128 → 10 dense classifier, softmax + CE      (std only, done)
+dataset/  Stage 2   command catalog → train/test JSONL with intents + BIO slot tags (done)
 model/    Stage 2   Burn intent classifier + slot model, then seq2seq   (planned)
 agent/    Stage 3   confirm-before-run agent with a safety layer        (planned)
           Stage 4   int8 weights embedded with include_bytes!, one binary (planned)
@@ -13,7 +14,7 @@ agent/    Stage 3   confirm-before-run agent with a safety layer        (planned
 The root `Cargo.toml` lists the members and holds the shared release profile (`opt-level = 3`, `lto = true`, `codegen-units = 1`, `strip = true`, `panic = "abort"`).
 
 ## Dependency rule
-Stage 1 crates depend on **nothing but `std`**, including their own random number generator. There is deliberately no shared `nn` library crate: `mnist` re-implements what it needs from `xor`, written again at a larger scale. Third-party crates (Burn) start in Stage 2, and each new dependency must be justified against the 5–30 MB binary target.
+Stage 1 crates depend on **nothing but `std`**, including their own random number generator. There is deliberately no shared `nn` library crate: `mnist` re-implements what it needs from `xor`, written again at a larger scale. Third-party crates start in Stage 2, and each new dependency must be justified against the 5–30 MB binary target. The first ones are `serde` and `serde_json`, used only by the `dataset` generator, which is a build-time tool and never ships in the agent binary.
 
 ---
 

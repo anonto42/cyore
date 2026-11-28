@@ -76,10 +76,10 @@ Each word asks a *query* (`Q`), every word offers a *key* (`K`), and the softmax
 ## What this means for Stage 2
 
 Stage 2 has to read a short English request and produce:
-1. An **intent**: one label out of about 51, each mapped to a command template (for example, "how much disk space" → `df -h`). This is *sentence classification*.
+1. An **intent**: one label out of 51, each mapped to a command template (for example, "how much disk space" → `df -h`). This is *sentence classification*.
 2. **Slots**: a tag on every word marking values like folder and file names (BIO tags: `B-` begins a value, `I-` continues one, `O` is any other word). This is *sequence tagging*.
 
-The [command dataset](../openspec/changes/add-command-dataset/proposal.md) provides exactly these labels. A sensible order:
+The [command dataset](../dataset/README.md) (`make commands-data`) provides exactly these labels. A sensible order:
 
 1. **Baseline: dense network on a bag of words**, for the intent only. It's the `mnist` network with a different input, so it shows how far plain counting gets. It can't tag slots, because a bag of words has lost the positions.
 2. **Joint model: embeddings → bidirectional GRU (or a 1-D CNN) → two heads.** One dense + softmax head per word gives the slot tags, and one head on the pooled sentence gives the intent. This is the plan's "intent classifier + slot model".
