@@ -40,7 +40,15 @@ nix develop
 direnv allow
 ```
 
-Without Nix, install Rust ≥ 1.85 (edition 2024) with [rustup](https://rustup.rs), plus `make`. You only need Node.js to run `make spec`.
+Without Nix, install [rustup](https://rustup.rs) and `make`. rustup reads `rust-toolchain.toml` and installs the pinned Rust version (with `rustfmt` and `clippy`) the first time you run `cargo` here. You only need Node.js to run `make spec`.
+
+### Updating Rust
+The Rust version is pinned so local checks see exactly what CI sees (a newer clippy can accept code that CI rejects). To move to a new version, change all three together in one commit:
+1. `flake.lock`: run `nix flake update` and note the new `rustc --version` inside `nix develop`.
+2. `rust-toolchain.toml`: set `channel` to that same version.
+3. `Dockerfile`: set `RUST_VERSION` to that same version.
+
+CI's "Check toolchain pin" step fails if `rust-toolchain.toml` and the Nix shell disagree.
 
 ---
 

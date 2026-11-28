@@ -125,7 +125,7 @@ The target pipeline for the finished agent (Stages 2–4):
 
 | Component | Specification | Notes |
 |---|---|---|
-| **Rust Toolchain** | Rust ≥ 1.85 (edition 2024) | Provided by the Nix dev shell |
+| **Rust Toolchain** | Rust 1.99.1 (edition 2024), pinned in `rust-toolchain.toml` | Provided by the Nix dev shell, or installed by rustup automatically |
 | **Build Tools** | `make`, `git` | Provided by the Nix dev shell |
 | **Dataset Download** | `curl`, `gunzip` | Used only by `make mnist-data` |
 | **OpenSpec** (optional) | Node.js for `npx @fission-ai/openspec` | Used only by `make spec` |
@@ -149,7 +149,7 @@ nix develop
 # or: direnv allow
 ```
 
-Without Nix, install Rust ≥ 1.85 with [rustup](https://rustup.rs) and use `make` as usual.
+Without Nix, install [rustup](https://rustup.rs): it reads `rust-toolchain.toml` and fetches the same Rust version CI uses, so `make check` gives the same result locally and in CI.
 
 ### 2. Verify Tooling & Tests
 
@@ -228,7 +228,8 @@ Any workspace member can be targeted with `CRATE=<member>`, for example `make bu
 ├── LICENSE                     # Apache License 2.0
 ├── Makefile                    # Build, test, lint, spec, dataset, and Docker targets
 ├── SECURITY.md                 # Safe-execution guarantees & vulnerability reporting
-└── flake.nix                   # Nix development shell
+├── flake.nix                   # Nix development shell
+└── rust-toolchain.toml         # Pinned Rust version (same as the Nix shell and CI)
 ```
 
 ---

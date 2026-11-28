@@ -6,6 +6,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@v27
+      # rust-toolchain.toml (rustup, releases) must name the same rustc as the Nix shell (flake.lock)
+      - name: Check toolchain pin
+        run: |
+          want=$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)
+          have=$(nix develop -c rustc --version | awk '/^rustc/ {print $2}')
+          echo "rust-toolchain.toml: $want, Nix shell: $have"
+          if [ "$want" != "$have" ]; then
+            echo "::error::rust-toolchain.toml pins $want but the Nix shell has rustc $have. Bump them together."
+            exit 1
+          fi
       # fmt check, clippy -D warnings, workspace tests, release build
       - run: nix develop -c make check
       # OpenSpec specs and active changes (strict)

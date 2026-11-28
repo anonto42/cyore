@@ -1,0 +1,7 @@
+# One Rust version for every way of building Cyore, so a local `make check` sees exactly what CI sees.
+# rustup reads this file (local builds, release workflow); the Nix dev shell gets its rustc from
+# flake.lock instead. CI fails if the two drift apart, so bump them together (and the Dockerfile).
+[toolchain]
+channel = "1.99.1"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

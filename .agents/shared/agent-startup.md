@@ -3,7 +3,8 @@
 When starting any new task, bug fix, or feature in this repository, follow these steps:
 
 1. **Check Environment:**
-   Run `cargo --version` (edition 2024 needs Rust ≥ 1.85). With Nix, `nix develop` (or direnv via
+   Run `cargo --version`: it must report the version pinned in `rust-toolchain.toml`, which is
+   the same rustc as the Nix shell (CI checks this). With Nix, `nix develop` (or direnv via
    `.envrc`) provides the full toolchain plus `make` and `node` for OpenSpec.
 2. **Review OpenSpec:**
    Inspect `openspec/config.yaml`, run `openspec list` and `openspec list --specs`, and check
@@ -23,6 +24,10 @@ When starting any new task, bug fix, or feature in this repository, follow these
      (sigmoid, softmax), `loss.rs` (cross-entropy), `network.rs` (params, forward, backward into
      `Gradients`, `apply`), `data.rs` (IDX loader), `metrics.rs`, `config.rs` (CLI), `main.rs`.
      The dataset lives in git-ignored `data/mnist/` (`make mnist-data`).
+   - `dataset/src/`: `catalog.rs` (intents, slot pools, allowlist: edit this to add data),
+     `grammar.rs` (phrasing grammar), `template.rs` (command templates), `tokenize.rs` (the shared
+     tokenization rule), `validate.rs` (catalog checks), `generate.rs` (examples, JSON types),
+     `random.rs`, `main.rs` (CLI, atomic writes). Output: git-ignored `data/commands/`.
 5. **Run Verification Before & After:**
    Always run `make check` (`cargo fmt --check`, `cargo clippy -D warnings`, `cargo test`,
    release build) before finishing any edit.

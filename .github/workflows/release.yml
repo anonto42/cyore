@@ -33,10 +33,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Installs the version pinned in rust-toolchain.toml, plus this job's target
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.target }}
+        shell: bash
+        run: |
+          rustup toolchain install
+          rustup target add "$TARGET"
+          rustc --version
 
       # musl targets produce fully static Linux binaries (same as the Dockerfile)
       - name: Install musl tools

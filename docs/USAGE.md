@@ -8,7 +8,7 @@ How to build and run every finished milestone. All commands run from the reposit
 ```bash
 git clone https://github.com/anonto42/cyore_ai.git
 cd cyore_ai
-nix develop          # or: direnv allow, or install Rust ≥ 1.85 with rustup
+nix develop          # or: direnv allow, or install rustup (it reads rust-toolchain.toml)
 make help            # list every target
 ```
 
