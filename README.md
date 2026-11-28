@@ -13,7 +13,9 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/anonto42/cyore/actions/workflows/ci.yml"><img src="https://github.com/anonto42/cyore/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/Rust-2024_Edition-orange?logo=rust" alt="Rust 2024">
+  <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache 2.0">
   <img src="https://img.shields.io/badge/Stage_1-std_only,_zero_deps-success" alt="Stage 1: std only">
   <img src="https://img.shields.io/badge/ML_Framework-Burn_(Stage_2)-red" alt="Burn in Stage 2">
   <img src="https://img.shields.io/badge/Workspace-One_Crate_per_Milestone-informational" alt="Cargo workspace">
@@ -42,8 +44,8 @@ The project grows in four stages. It starts with a neural network written by han
 ### Stage 1: How Models Are Actually Built
 - **Core Ideas**: Tensors, layers, weights, activation functions, loss, gradient descent and backpropagation (3Blue1Brown neural network series).
 - **XOR From Scratch** (`xor/`, done): A 2-layer network that learns XOR in plain Rust with no libraries. The forward pass, loss and backpropagation are all written by hand.
-- **MNIST Digit Recogniser** (`mnist/`, next): Extend the network to recognise handwritten digits and see training on real data: softmax with cross-entropy, mini-batches, shuffling and test-set accuracy.
-- **Architecture Survey**: The main architectures and what each is for: dense networks, CNNs (images), RNNs, and transformers (text). Andrej Karpathy's "Zero to Hero" series covers transformers.
+- **MNIST Digit Recogniser** (`mnist/`, done): Extend the network to recognise handwritten digits and see training on real data: softmax with cross-entropy, mini-batches, shuffling, and test-set accuracy with a confusion matrix. It reaches **97.96% test accuracy**.
+- **Architecture Survey** (next): The main architectures and what each is for: dense networks, CNNs (images), RNNs, and transformers (text). Andrej Karpathy's "Zero to Hero" series covers transformers.
 
 ### Stage 2: Build Your Own Model in Rust
 - **Learn Burn** (the Burn Book): Tensors, modules, the training loop, and saving and loading weights.
@@ -73,8 +75,8 @@ The project grows in four stages. It starts with a neural network written by han
 | Stage | Milestone | Crate | Status |
 |---|---|---|---|
 | 1 | XOR network in pure Rust | `xor/` | ✅ Done: converges to MSE ≈ 3e-5 in 20k epochs (seed 42) |
-| 1 | MNIST digit recogniser | `mnist/` | 🚧 In progress ([proposal](openspec/changes/add-mnist-classifier/proposal.md)) |
-| 1 | Architecture survey (dense, CNN, RNN, transformer) | — | ⏳ Not started |
+| 1 | MNIST digit recogniser | `mnist/` | ✅ Done: 97.96% test accuracy after 10 epochs (784 → 128 → 10, seed 42) |
+| 1 | Architecture survey (dense, CNN, RNN, transformer) | — | 🚧 Next (study, no code) |
 | 2 | Burn: intent classifier + slot model, then tiny seq2seq | — | ⏳ Not started |
 | 3 | Rust agent with confirm-before-run and safety rules | — | ⏳ Not started |
 | 4 | int8 quantisation, embedded weights, cross-compile | — | 🧩 Release profile already set in root `Cargo.toml` |
@@ -125,6 +127,7 @@ The target pipeline for the finished agent (Stages 2–4):
 |---|---|---|
 | **Rust Toolchain** | Rust ≥ 1.85 (edition 2024) | Provided by the Nix dev shell |
 | **Build Tools** | `make`, `git` | Provided by the Nix dev shell |
+| **Dataset Download** | `curl`, `gunzip` | Used only by `make mnist-data` |
 | **OpenSpec** (optional) | Node.js for `npx @fission-ai/openspec` | Used only by `make spec` |
 | **Docker** (optional) | Any recent Docker Engine | Builds a static musl binary into a `FROM scratch` image |
 | **Target Machine** | Any x86_64 or ARM PC, including a Raspberry Pi | No GPU required at any stage |
@@ -173,14 +176,29 @@ make size
 
 The network (2 → 4 → 1, sigmoid, MSE, learning rate 1.0) trains for 20,000 epochs, logs the loss every 2,000 epochs, and then prints its predictions for the XOR truth table.
 
-### 4. Run in a Container
+### 4. Train the MNIST Digit Classifier
+
+```bash
+# Download the four MNIST IDX files into data/mnist/ (once, git-ignored)
+make mnist-data
+
+# Train 784 → 128 → 10 for 10 epochs and print test accuracy + a confusion matrix
+make mnist
+
+# Pass options through ARGS
+make mnist ARGS="--epochs 2 --hidden 64 --seed 7"
+```
+
+Every option is listed in the [Usage Guide](docs/USAGE.md#3-mnist-mnist).
+
+### 5. Run in a Container
 
 ```bash
 # Build a static musl binary into an empty FROM scratch image, then run it
 make docker-run
 ```
 
-Any workspace member can be targeted with `CRATE=<member>`, for example `make run CRATE=mnist`.
+Any workspace member can be targeted with `CRATE=<member>`, for example `make build CRATE=mnist`.
 
 ---
 
@@ -192,17 +210,25 @@ Any workspace member can be targeted with `CRATE=<member>`, for example `make ru
 │   │   ├── memory/             # Project status & design decisions
 │   │   └── rules/              # Rust standards, safety, and git rules
 │   └── skills/                 # OpenSpec workflow skills (propose → apply → archive)
+├── .github/                    # CI & release workflows, issue and PR templates
 ├── assets/                     # Brand identity and SVG crest logos
-├── mnist/                      # Stage 1: MNIST digit recogniser (std only, in progress)
+├── data/                       # Downloaded datasets (git-ignored, make mnist-data)
+├── docs/                       # Architecture, usage, testing, release and brand guides
+├── mnist/                      # Stage 1: MNIST digit classifier in pure Rust
+│   └── src/                    # config, data (IDX), matrix, activation, loss, network, metrics
 ├── openspec/                   # Spec-driven change management & capability specs
-│   ├── changes/                # Active proposals (e.g. add-mnist-classifier)
-│   └── specs/                  # Accepted capability specs (e.g. xor-network)
+│   ├── changes/                # Active proposals; archive/ keeps finished ones
+│   └── specs/                  # Accepted specs: xor-network, mnist-classifier, mnist-dataset
 ├── xor/                        # Stage 1: 2-layer XOR network in pure Rust
 │   └── src/                    # activation, loss, layer, network, random, data, main
 ├── Cargo.toml                  # Workspace members + shared release profile
+├── CONTRIBUTING.md             # How to develop, test, and submit changes
+├── CODE_OF_CONDUCT.md          # Community standards
 ├── Dockerfile                  # musl build → FROM scratch runtime image
-├── flake.nix                   # Nix development shell
-└── Makefile                    # Build, test, lint, spec, and Docker targets
+├── LICENSE                     # Apache License 2.0
+├── Makefile                    # Build, test, lint, spec, dataset, and Docker targets
+├── SECURITY.md                 # Safe-execution guarantees & vulnerability reporting
+└── flake.nix                   # Nix development shell
 ```
 
 ---
@@ -223,6 +249,8 @@ All targets act on `CRATE` (default: `xor`). Override it with `make <target> CRA
 | `make fmt` | Formats all Rust code |
 | `make size` | Shows the release binary size (Stage 4 target: 5–30 MB) |
 | `make spec` | Validates OpenSpec specs and changes (strict) |
+| `make mnist-data` | Downloads and unpacks the MNIST dataset into `data/mnist/` |
+| `make mnist` | Trains the MNIST classifier (release); pass options via `ARGS="..."` |
 | `make docker-build` | Builds the container image for `CRATE` |
 | `make docker-run` | Runs the container image for `CRATE` |
 | `make clean` | Removes build artifacts |
@@ -232,6 +260,15 @@ All targets act on `CRATE` (default: `xor`). Override it with `make <target> CRA
 
 ## Documentation Index
 
+- [Architecture Reference](docs/ARCHITECTURE.md): Workspace layout, the math of each network, and the planned agent pipeline.
+- [Usage Guide](docs/USAGE.md): How to run every milestone, including all MNIST options.
+- [Testing Guide](docs/TESTING.md): Gradient checks, reproducibility tests, and the `make check` gate.
+- [Releases & Packaging](docs/RELEASES.md): Versioning, cross-platform release builds, and checksums.
+- [MNIST Crate Guide](mnist/README.md): How the digit classifier is built and how to run it.
+- [Brand Guidelines](docs/BRANDING.md): Crest logo, colours, and how to regenerate it.
+- [Contributing Guide](CONTRIBUTING.md): How to develop, test, and contribute to Cyore.
+- [Code of Conduct](CODE_OF_CONDUCT.md): Community pledge and standards.
+- [Security Policy](SECURITY.md): Safe-execution guarantees and vulnerability disclosure.
 - [Agent Loader](AGENTS.md): Project context and the non-negotiable invariants.
 - [Agent Startup Checklist](.agents/shared/agent-startup.md): Environment, OpenSpec and verification steps before any change.
 - [Project Status](.agents/shared/memory/project-status.md): Milestones, design decisions and known follow-ups.
@@ -239,7 +276,8 @@ All targets act on `CRATE` (default: `xor`). Override it with `make <target> CRA
 - [Safety Rules](.agents/shared/rules/safety.md): Confirmation, allowlist/blocklist, confidence and timeout rules for the agent.
 - [Git Rules](.agents/shared/rules/git.md): Commit style and authorship rules.
 - [XOR Network Spec](openspec/specs/xor-network/spec.md): The accepted capability spec for the `xor` crate.
-- [MNIST Classifier Proposal](openspec/changes/add-mnist-classifier/proposal.md): The active change for the next milestone.
+- [MNIST Classifier Spec](openspec/specs/mnist-classifier/spec.md) and [MNIST Dataset Spec](openspec/specs/mnist-dataset/spec.md): The accepted capability specs for the `mnist` crate.
+- [MNIST Change Archive](openspec/changes/archive/2026-11-28-add-mnist-classifier/proposal.md): The proposal, design, and tasks that added the `mnist` crate.
 
 ---
 
@@ -264,6 +302,12 @@ Cyore enforces its safety rules in code, not by trusting the model:
 - **Always Refuse**: `rm -rf /`, `mkfs`, `dd`, `shutdown`, `reboot`, fork bombs, writes to `/dev/sd*`, and `chmod -R 777 /`, whatever the model's confidence.
 - **Ask When Unsure**: Below the confidence threshold, the agent asks you to clarify instead of guessing.
 - **Fail Gracefully**: Every command has a timeout, and bad model output or a failed command never crashes the agent.
+
+---
+
+## License
+
+Cyore is open-source software licensed under the [Apache License 2.0](LICENSE).
 
 ---
 
