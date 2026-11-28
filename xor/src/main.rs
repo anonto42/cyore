@@ -64,11 +64,15 @@ fn main() {
     );
     println!("{}", "-".repeat(50));
 
+    let mut correct = 0;
     for (input, target) in inputs.iter().zip(&targets) {
         let pred = network.predict(input);
         let predicted_val = pred[0];
         let target_val = target[0];
         let rounded = if predicted_val >= 0.5 { 1.0 } else { 0.0 };
+        if rounded == target_val {
+            correct += 1;
+        }
 
         println!(
             "[{:.1}, {:.1}]          {:<10.1} {:<12.4} {:<10.1}",
@@ -76,5 +80,14 @@ fn main() {
         );
     }
 
-    println!("\nTraining complete! Network successfully learned XOR.");
+    // Only claim success if every row of the truth table is right.
+    if correct == inputs.len() {
+        println!("\nTraining complete! Network successfully learned XOR.");
+    } else {
+        println!(
+            "\nTraining complete, but the network got only {}/{} right. Try another seed or more epochs.",
+            correct,
+            inputs.len()
+        );
+    }
 }
