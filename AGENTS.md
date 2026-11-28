@@ -22,7 +22,9 @@ it as one small binary for minimal PCs. The staged plan lives in `README.md`.
 It is a Cargo workspace (root `Cargo.toml`); each learning milestone is its own member crate:
 - **`xor/`** (Stage 1, done): a 2-layer sigmoid network in pure Rust, no dependencies — forward
   pass, MSE loss, and hand-written backpropagation.
-- Planned members: `mnist/` (Stage 1), a Burn model crate (Stage 2), the agent (Stage 3).
+- **`mnist/`** (Stage 1, done): a 784→128→10 dense network (sigmoid hidden, softmax output,
+  cross-entropy, mini-batch SGD) trained on MNIST from the raw IDX files; ≈98% test accuracy.
+- Planned members: a Burn model crate (Stage 2), the agent (Stage 3).
 
 The owner is learning; prefer clear, well-commented code that explains *why* over clever code.
 

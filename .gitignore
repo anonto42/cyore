@@ -1,6 +1,9 @@
 # Rust build output (workspace target dir)
 target/
 
+# Downloaded datasets (make mnist-data)
+data/
+
 # Environment and secrets
 .env
 .env.local

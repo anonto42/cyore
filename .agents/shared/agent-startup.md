@@ -19,6 +19,10 @@ When starting any new task, bug fix, or feature in this repository, follow these
    - `xor/src/`: `activation.rs`, `loss.rs`, `layer.rs` (dense layer, forward/backward),
      `network.rs` (hidden + output layers, `train_step`), `random.rs` (xorshift RNG),
      `data.rs` (dataset), `main.rs` (training loop and evaluation).
+   - `mnist/src/`: `random.rs` (Rng + shuffle), `matrix.rs` (flat matrix), `activation.rs`
+     (sigmoid, softmax), `loss.rs` (cross-entropy), `network.rs` (params, forward, backward into
+     `Gradients`, `apply`), `data.rs` (IDX loader), `metrics.rs`, `config.rs` (CLI), `main.rs`.
+     The dataset lives in git-ignored `data/mnist/` (`make mnist-data`).
 5. **Run Verification Before & After:**
    Always run `make check` (`cargo fmt --check`, `cargo clippy -D warnings`, `cargo test`,
    release build) before finishing any edit.

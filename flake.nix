@@ -26,6 +26,7 @@
           default = pkgs.mkShell {
             packages = with pkgs; [
               git
+              curl # for `make mnist-data`
               gnumake
               cargo
               rustc
