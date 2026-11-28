@@ -8,6 +8,9 @@ pub struct Layer {
     pub outputs: Vec<f64>,      // saved from the last forward pass (for backprop)
 }
 
+// The loops below index with `j` (neuron) and `i` (input) on purpose, so the code reads like the
+// math: z_j = b_j + sum_i w_ji * x_i. Iterator chains would hide that, so this lint is off here.
+#[allow(clippy::needless_range_loop)]
 impl Layer {
     pub fn new(n_inputs: usize, n_neurons: usize, rng: &mut Rng) -> Self {
         let mut weights = Vec::with_capacity(n_neurons);
