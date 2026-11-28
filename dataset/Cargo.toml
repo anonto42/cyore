@@ -1,0 +1,10 @@
+[package]
+name = "dataset"
+version = "0.1.0"
+edition = "2024"
+
+# Stage 2. serde/serde_json are used only by this generator to write and check JSON;
+# they never end up in a shipped binary (see the add-command-dataset design, decision 10).
+[dependencies]
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"

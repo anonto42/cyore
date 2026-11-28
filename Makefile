@@ -13,7 +13,7 @@ MNIST_FILES := train-images-idx3-ubyte train-labels-idx1-ubyte t10k-images-idx3-
 # Extra options for `make mnist`, e.g. make mnist ARGS="--epochs 2"
 ARGS ?=
 
-.PHONY: help build run dev test bench lint fmt fmt-check clean check spec size docker-build docker-run mnist-data mnist
+.PHONY: help build run dev test bench lint fmt fmt-check clean check spec size docker-build docker-run mnist-data mnist commands-data
 
 help:
 	@printf '%s\n' 'Cyore commands (CRATE=$(CRATE); override with CRATE=<member>):'
@@ -29,6 +29,7 @@ help:
 	@printf '%s\n' '  make spec          Validate OpenSpec specs and changes (strict)'
 	@printf '%s\n' '  make mnist-data    Download and unpack the MNIST dataset into data/mnist/'
 	@printf '%s\n' '  make mnist         Train the MNIST classifier (release); pass options via ARGS="..."'
+	@printf '%s\n' '  make commands-data Generate the Stage 2 command dataset into data/commands/'
 	@printf '%s\n' '  make docker-build  Build the container image for CRATE'
 	@printf '%s\n' '  make docker-run    Run the container image for CRATE'
 	@printf '%s\n' '  make clean         Remove build artifacts'
@@ -87,6 +88,9 @@ mnist-data:
 
 mnist:
 	@$(CARGO) run --release -p mnist -- $(ARGS)
+
+commands-data:
+	@$(CARGO) run --release -q -p dataset -- $(ARGS)
 
 docker-build:
 	@docker build --build-arg CRATE=$(CRATE) -t $(IMAGE):local .

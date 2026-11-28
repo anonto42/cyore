@@ -24,7 +24,10 @@ It is a Cargo workspace (root `Cargo.toml`); each learning milestone is its own 
   pass, MSE loss, and hand-written backpropagation.
 - **`mnist/`** (Stage 1, done): a 784→128→10 dense network (sigmoid hidden, softmax output,
   cross-entropy, mini-batch SGD) trained on MNIST from the raw IDX files; ≈98% test accuracy.
-- Planned members: a Burn model crate (Stage 2), the agent (Stage 3).
+- **`dataset/`** (Stage 2, done): generator for the command dataset: a catalog of 50 safe
+  command intents + `unknown`, expanded into `data/commands/{train,test}.jsonl` and
+  `intents.json` (`make commands-data`). Uses `serde`/`serde_json` (generator only).
+- Planned members: a Burn intent classifier + slot model (Stage 2), the agent (Stage 3).
 
 The owner is learning; prefer clear, well-commented code that explains *why* over clever code.
 
